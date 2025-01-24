@@ -1,5 +1,5 @@
 /*
-Copyright  © 2025 Claus Vind-Andreasen
+Copyright  Â© 2025 Claus Vind-Andreasen
 
 This program is free software; you can redistribute it and /or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the GNU General Public License for more details.
@@ -225,7 +225,7 @@ public:
     		re[ScrambleTable[t]] = re[ScrambleTable[t+1]]; re[ScrambleTable[t+1]] = temp;
 	  		temp  = im[ScrambleTable[t]]; im[ScrambleTable[t]] = im[ScrambleTable[t+1]]; 
 	  		im[ScrambleTable[t+1]] = temp;
-	  		printf("swapping %3d:    %3d and %3d\n",t/2, ScrambleTable[t], ScrambleTable[t+1] );
+	  		//printf("swapping %3d:    %3d and %3d\n",t/2, ScrambleTable[t], ScrambleTable[t+1] );
     	}
 		}
 	
