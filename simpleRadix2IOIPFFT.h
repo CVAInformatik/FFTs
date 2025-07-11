@@ -66,8 +66,8 @@ public:
 	void InverseFFT(FFTType *re, FFTType*im, unsigned int stride = 1 ){ 
 		     if( length > 0 ) radix2IOIPFFT(length,im, re, wre, wim, stride  );	
 		     for(u32 i = 0 ; i < length; i++){
-		     	 re[i] = re[i]/length;
-		     	 im[i] = im[i]/length;
+		     	 re[i*stride] = re[i*stride]/length;
+		     	 im[i*stride] = im[i*stride]/length;
 		     }
   }
 	
