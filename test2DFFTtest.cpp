@@ -125,10 +125,13 @@ void test2(u32 P )
 	
     initBuffer(N*N, sre1); initBuffer(N*N, sim1);
     initBuffer(N*N, sre2); initBuffer(N*N, sim2);
+
+#define OX 5
+#define OY 5
     
-    putValue(N,sre1, 0, 0, 1.0);
-    putValue(N,sre1, 1, 0, 1.0);
-    putValue(N,sre1, 0, 1, 1.0);
+    putValue(N,sre1, OX, OY, 1.0);
+    putValue(N,sre1, OX+1, OY, 1.0);
+    putValue(N,sre1, OX,OY+1, 1.0);
 
     printf("SR1: \n");
     for(int y = 0 ; y < N; y++){
@@ -139,12 +142,12 @@ void test2(u32 P )
     printf("\n");
 
 
-#define OX 3
-#define OY 3
+#define OXd -5
+#define OYd -5
 
-    putValue(N,sre2, OX,   OY,   1.0);
-    putValue(N,sre2, OX+1, OY,   1.0);
-    putValue(N,sre2, OX,   OY+1, 1.0);
+    putValue(N,sre2, OX+OXd,   OY+OYd,   1.0);
+    putValue(N,sre2, OX+1+OXd, OY+OYd,   1.0);
+    putValue(N,sre2, OX+OXd,   OY+1+OYd, 1.0);
 
     printf(" SR2: \n");
     for(int y = 0 ; y < N; y++){
@@ -246,13 +249,13 @@ void test3(){
 		initBuffer(N, sre2);
 		initBuffer(N, sim2);
 		
-		sre1[51] = 1.0;
-		sre1[52] = 2.0;
-		sre1[53] = 1.0;
+		sre1[11] = 1.0;
+		sre1[12] = 2.0;
+		sre1[13] = 1.0;
 
-		sre2[61] = 1.0;
-		sre2[62] = 2.0;
-		sre2[63] = 1.0;
+		sre2[0] = 1.0;
+		sre2[1] = 2.0;
+		sre2[2] = 1.0;
 
 		fft->ForwardFFT(sre1, sim1);
 		fft->ForwardFFT(sre2, sim2);
