@@ -6,7 +6,8 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 - 1307 USA
 */
 
-#include "simpleRadix2IOIPFFT.h"
+//#include "simpleRadix2IOIPFFT.h"
+#include "simpleRadix2IOIPFFTindex.h"
 
 #define FORMAT "4.3f"
 
@@ -35,7 +36,7 @@ FFTType getValue(u32 N, FFTType *s, u32 x, u32 y)
 
 void test(u32 P )
 {
-	simpleRadix2IOIPFFTtype* fft = new simpleRadix2IOIPFFTtype();
+	IndexedSimpleRadix2IOIPFFTtype* fft = new IndexedSimpleRadix2IOIPFFTtype();
 	
 	fft->SetLength(P);
   u32 N = fft->Status();
@@ -50,9 +51,9 @@ void test(u32 P )
     initBuffer(N*N, sre1); initBuffer(N*N, sim1);
     initBuffer(N*N, sre2); initBuffer(N*N, sim2);
     
-    putValue(N,sre1, 0, 0, 1.0);
-    putValue(N,sre1, 1, 0, 1.0);
-    putValue(N,sre1, 0, 1, 1.0);
+    putValue(N,sre1, 4, 2, 1.0);
+    putValue(N,sre1, 4+1, 2, 1.0);
+    putValue(N,sre1, 4, 2+1, 1.0);
 
     printf("\n");
     for(int y = 0 ; y < N; y++){
@@ -79,15 +80,13 @@ void test(u32 P )
   	}
     printf("\n");
 
-    // note: We reverse the order of the axes, when we invert !
+     /* along the x-axis  N ffts stride 1 */
+    for(int i = 0 ; i < N; i++)
+       fft->InverseFFT(sre1 + (i*N), sim1+(i*N),1 );
 
     /* along the y-axis  N ffts stride N */
     for(int i = 0 ; i < N; i++)
        fft->InverseFFT(sre1+i, sim1+i, N );
-
-    /* along the x-axis  N ffts stride 1 */
-    for(int i = 0 ; i < N; i++)
-       fft->InverseFFT(sre1 + (i*N), sim1+(i*N),1 );
 
 
     printf("\n");
@@ -111,7 +110,7 @@ void test(u32 P )
 */
 void test2(u32 P )
 {
-	simpleRadix2IOIPFFTtype* fft = new simpleRadix2IOIPFFTtype();
+	IndexedSimpleRadix2IOIPFFTtype* fft = new IndexedSimpleRadix2IOIPFFTtype();
 	
 	fft->SetLength(P);
   u32 N = fft->Status();
@@ -129,7 +128,7 @@ void test2(u32 P )
 #define OX 5
 #define OY 5
     
-    putValue(N,sre1, OX, OY, 1.0);
+    putValue(N,sre1, OX, OY, 2.0);
     putValue(N,sre1, OX+1, OY, 1.0);
     putValue(N,sre1, OX,OY+1, 1.0);
 
@@ -142,10 +141,10 @@ void test2(u32 P )
     printf("\n");
 
 
-#define OXd -5
-#define OYd -5
+#define OXd 3
+#define OYd 6
 
-    putValue(N,sre2, OX+OXd,   OY+OYd,   1.0);
+    putValue(N,sre2, OX+OXd,   OY+OYd,   2.0);
     putValue(N,sre2, OX+1+OXd, OY+OYd,   1.0);
     putValue(N,sre2, OX+OXd,   OY+1+OYd, 1.0);
 
@@ -204,15 +203,13 @@ void test2(u32 P )
         sim1[i] = tim;
 		}
 		
-    // note: We reverse the order of the axes, when we invert !
+    /* along the x-axis  N ffts stride 1 */
+    for(int i = 0 ; i < N; i++)
+       fft->InverseFFT(sre1 + (i*N), sim1+(i*N),1 );
 
     /* along the y-axis  N ffts stride N */
     for(int i = 0 ; i < N; i++)
        fft->InverseFFT(sre1+i, sim1+i, N );
-
-    /* along the x-axis  N ffts stride 1 */
-    for(int i = 0 ; i < N; i++)
-       fft->InverseFFT(sre1 + (i*N), sim1+(i*N),1 );
 
 
     printf("\n");
@@ -232,7 +229,7 @@ void test2(u32 P )
 }
 
 void test3(){
-	simpleRadix2IOIPFFTtype* fft = new simpleRadix2IOIPFFTtype();
+	IndexedSimpleRadix2IOIPFFTtype* fft = new IndexedSimpleRadix2IOIPFFTtype();
 	
 	fft->SetLength(8);  // 256 punkter
   u32 N = fft->Status();
@@ -249,13 +246,13 @@ void test3(){
 		initBuffer(N, sre2);
 		initBuffer(N, sim2);
 		
-		sre1[11] = 1.0;
-		sre1[12] = 2.0;
-		sre1[13] = 1.0;
+		sre1[0] = 1.0;
+		sre1[1] = 2.0;
+		sre1[2] = 1.0;
 
-		sre2[0] = 1.0;
-		sre2[1] = 2.0;
-		sre2[2] = 1.0;
+		sre2[21] = 1.0;
+		sre2[22] = 2.0;
+		sre2[23] = 1.0;
 
 		fft->ForwardFFT(sre1, sim1);
 		fft->ForwardFFT(sre2, sim2);
@@ -279,7 +276,8 @@ void test3(){
 
 int main(int argc, char **argv)
 {
+	test(3);
 	test2(4);
-	//test3();
+	test3();
 	return 0;
 }
