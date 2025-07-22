@@ -1,6 +1,6 @@
 #pragma once
 /*
-Copyright  © 2025 Claus Vind-Andreasen
+Copyright  Â© 2025 Claus Vind-Andreasen
 
 This program is free software; you can redistribute it and /or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the GNU General Public License for more details.
@@ -56,13 +56,13 @@ public:
 
 		 		wre = new FFTType[length/2];
 		 		wim = new FFTType[length/2];
- 		    for(u32 i = 0; i < length/2; i++) {
+ 		    		for(u32 i = 0; i < length/2; i++) {
 					wre[i] = std::cos((  2*PI *i )/length);
 					wim[i] = std::sin((  2*PI *i )/length);
-    		}
-    		indexMap = new unsigned int[length];
-    		for(u32 i = 0; i < length; i++) indexMap[i] = i;
-    		rotationMap = new unsigned int[length];
+    				}
+    				indexMap = new unsigned int[length];
+    				for(u32 i = 0; i < length; i++) indexMap[i] = i;
+    				rotationMap = new unsigned int[length];
 		 }
 	}
 	
@@ -95,23 +95,24 @@ public:
 	void InverseFFT(FFTType *re, FFTType*im, unsigned int stride = 1 )
 	{ 
 		for (int i = 0; i < length; i++) indexMap[i] = i*stride  ;
-	  if( length > 0 ) { 
-	  	radix2IOIPFFT(length,im, re, wre, wim, indexMap  );	
-	    for(u32 i = 0 ; i < length; i++){
-	    	 re[indexMap[i]] = re[indexMap[i]]/length;
-		  	 im[indexMap[i]] = im[indexMap[i]]/length;
-		  }
-		}
-  }
+		if( length > 0 ) { 
+	  		radix2IOIPFFT(length,im, re, wre, wim, indexMap  );	
+	    		for(u32 i = 0 ; i < length; i++){
+	    	 		re[indexMap[i]] = re[indexMap[i]]/length;
+		  		im[indexMap[i]] = im[indexMap[i]]/length;
+			}
+	 	}
+  	}	
 	void InverseFFT(FFTType *re, FFTType*im, unsigned int *indexMap )
 	{ 
-     if( length > 0 ){ radix2IOIPFFT(length,im, re, wre, wim, indexMap  );	
-		     for(u32 i = 0 ; i < length; i++){
-		     	 re[indexMap[i]] = re[indexMap[i]]/length;
-		     	 im[indexMap[i]] = im[indexMap[i]]/length;
-		     }
+     		if( length > 0 ){ 
+			radix2IOIPFFT(length,im, re, wre, wim, indexMap  );	
+			for(u32 i = 0 ; i < length; i++){
+		    		re[indexMap[i]] = re[indexMap[i]]/length;
+		     	 	im[indexMap[i]] = im[indexMap[i]]/length;
+			}
 		}
-  }
+  	}
 
  	void rotate(u32 rotation, FFTType *re, FFTType*im, unsigned int stride = 1 )
 	{ 
@@ -146,10 +147,10 @@ public:
 					FFTType tim ;
 					tre =  re[indexMap[rotationMap[ix]]];
 					tim =  im[indexMap[rotationMap[ix]]];
-          re[indexMap[rotationMap[ix]]] = re[indexMap[ix]] ;     
-          im[indexMap[rotationMap[ix]]] = im[indexMap[ix]] ;     
-          re[indexMap[ix]] = tre;
-          im[indexMap[ix]] = tim;
+          				re[indexMap[rotationMap[ix]]] = re[indexMap[ix]] ;     
+          				im[indexMap[rotationMap[ix]]] = im[indexMap[ix]] ;     
+          				re[indexMap[ix]] = tre;
+          				im[indexMap[ix]] = tim;
 					rotationMap[rotationMap[ix]] = 0;
 					rotationMap[ix] = 0;
 				}
@@ -185,12 +186,12 @@ public:
 		unsigned int *indexMap ;
 		unsigned int *rotationMap ;
 
-		void radix2IOIPFFT(u32 N,FFTType *re, FFTType*im, FFTType *wre, FFTType* wim, unsigned int *indexMap)
+void radix2IOIPFFT(u32 N,FFTType *re, FFTType*im, FFTType *wre, FFTType* wim, unsigned int *indexMap)
     {
- 	    u32 NH = N/2;
-      u32 M = 0 ;
-      u32 mtemp = 1 ;
-			while (mtemp < N) {mtemp = mtemp+ mtemp; M++;}
+ 		u32 NH = N/2;
+      		u32 M = 0 ;
+      		u32 mtemp = 1 ;
+		while (mtemp < N) {mtemp = mtemp+ mtemp; M++;}
   		
   
 			for( u32 L = 1; L < ((M+3)/2) ; L++ ) //30  Temperton's FORTRAN Label
@@ -217,7 +218,7 @@ public:
 			 	  			FFTType Zre = 0.0, Zim = 0.0;
 				 	  		Zre = -( im[indexMap[IA+I]] - im[indexMap[IB+I]]);
 				 	  		Zim =  re[indexMap[IA+I]] - re[indexMap[IB+I]];
-	  		 	  	re[indexMap[(IA+I)]] = re[indexMap[(IA+I)]] + re[indexMap[IB+I]];
+	  		 	  			re[indexMap[(IA+I)]] = re[indexMap[(IA+I)]] + re[indexMap[IB+I]];
 				 	  		im[indexMap[(IA+I)]] = im[indexMap[IA+I]] + im[indexMap[IB+I]];
 				 	  		re[indexMap[(IB+I)]] = Zre;
 				 	  		im[indexMap[(IB+I)] ] = Zim;
@@ -228,7 +229,7 @@ public:
 		 	  				FFTType Zre = 0.0, Zim = 0.0;
 				 	  		Zre = (Wreal*( re[indexMap[IA+I]] - re[indexMap[IB+I]])) - (Wimag* ( im[indexMap[IA+I]] - im[indexMap[IB+I]]));
 				 	  		Zim = (Wimag*( re[indexMap[IA+I]] - re[indexMap[IB+I]])) + (Wreal* ( im[indexMap[IA+I]] - im[indexMap[IB+I]]));
-	  		 	  		re[indexMap[(IA+I)] ] = re[indexMap[(IA+I)] ] + re[indexMap[(IB+I) ]];
+	  		 	  			re[indexMap[(IA+I)] ] = re[indexMap[(IA+I)] ] + re[indexMap[(IB+I) ]];
 				 	  		im[indexMap[(IA+I)] ] = im[indexMap[(IA+I)] ] + im[indexMap[(IB+I) ]];
 				 	  		re[indexMap[(IB+I)] ] = Zre;
 				 	  		im[indexMap[(IB+I)] ] = Zim;
@@ -265,10 +266,10 @@ public:
 		 	  				tim =  im[indexMap[IC+I]] - im[indexMap[ID+I]];
 		 	  				re[indexMap[ID+I]] = tre;
 		 	  				im[indexMap[ID+I]] = tim;
-          			re[indexMap[IC+I]] = Zre ;
-          			im[indexMap[IC+I]] = Zim ;
-  			  		}
-							else if( KK== (N/4)){ // W = (0,1)
+          						re[indexMap[IC+I]] = Zre ;
+          						im[indexMap[IC+I]] = Zim ;
+  			  			}
+						else if( KK== (N/4)){ // W = (0,1)
 		 	  				FFTType Zre = - ( im[indexMap[IA+I]] - im[indexMap[IB+I]]);
 		 	  				FFTType Zim =     re[indexMap[IA+I]] - re[indexMap[IB+I]];
 		 	  				re[indexMap[(IA+I)]] = re[indexMap[IA+I]] + re[indexMap[IB+I]];
@@ -280,10 +281,10 @@ public:
 		 	  				tim =   re[indexMap[IC+I]] - re[indexMap[ID+I]];
 		 	  				re[indexMap[ID+I]] = tre;
 		 	  				im[indexMap[ID+I]] = tim;
-          			re[indexMap[IC+I]] = Zre ;
-          			im[indexMap[IC+I]] = Zim ;
-							}
-							else {
+          						re[indexMap[IC+I]] = Zre ;
+          						im[indexMap[IC+I]] = Zim ;
+						}
+						else {
 					 	  	FFTType Wimag =   wim[KK];
 		 				  	FFTType Wreal =   wre[KK];
 		 	  				FFTType Zre = (Wreal*( re[indexMap[IA+I]] - re[indexMap[IB+I]])) - (Wimag* ( im[indexMap[IA+I]] - im[indexMap[IB+I]]));
@@ -297,9 +298,9 @@ public:
 		 	  				tim = (Wimag*( re[indexMap[IC+I]] - re[indexMap[ID+I]])) + (Wreal* ( im[indexMap[IC+I]] - im[indexMap[ID+I]]));
 		 	  				re[indexMap[ID+I]] = tre;
 		 	  				im[indexMap[ID+I]] = tim;
-          			re[indexMap[IC+I]] = Zre ;
-          			im[indexMap[IC+I]] = Zim ;
-          		}
+          						re[indexMap[IC+I]] = Zre ;
+          						im[indexMap[IC+I]] = Zim ;
+          					}
 		 	  		}//40
 		 	  	}// 50			
 		 	  	KK = KK + LA;
