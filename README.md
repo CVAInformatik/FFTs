@@ -1,2 +1,2 @@
 # FFTs
-Various FFT implementation, mostly in CPP
+Various FFT implementation, mostly in C++
