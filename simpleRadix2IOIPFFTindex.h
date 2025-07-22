@@ -1,3 +1,4 @@
+#pragma once
 /*
 Copyright  © 2025 Claus Vind-Andreasen
 
@@ -34,6 +35,7 @@ public:
 		 	  delete [] wre;
 		 	  delete [] wim;
 		 	  delete [] indexMap;
+		 	  delete [] rotationMap;
 	};
 	
 	// 
@@ -46,18 +48,21 @@ public:
 		 	  delete [] wre;
 		 	  delete [] wim;
 		 	  delete [] indexMap;
+		 	  delete [] rotationMap;
 		 }
 		 if( P > 0 ) {
 		 		length = 1; 
 		 		for(int i = 0; i < P ; i++) length = length + length;  
+
 		 		wre = new FFTType[length/2];
 		 		wim = new FFTType[length/2];
  		    for(u32 i = 0; i < length/2; i++) {
-					wre[i] = std::cos(( 2*PI *i )/length);
-					wim[i] = std::sin(( 2*PI *i )/length);
+					wre[i] = std::cos((  2*PI *i )/length);
+					wim[i] = std::sin((  2*PI *i )/length);
     		}
     		indexMap = new unsigned int[length];
     		for(u32 i = 0; i < length; i++) indexMap[i] = i;
+    		rotationMap = new unsigned int[length];
 		 }
 	}
 	
@@ -71,41 +76,114 @@ public:
 		}
 	}
 	
-	void ForwardFFT(FFTType *re, FFTType*im, unsigned int *indexMap ){ if( length > 0 ) radix2IOIPFFT(length,re, im, wre, wim, indexMap );}
+	void ForwardFFT(FFTType *re, FFTType*im, unsigned int *indexMap ){
+		 if( length > 0 ) radix2IOIPFFT(length,re, im, wre, wim, indexMap );
+	}
 
 	void UnscaledInverseFFT(FFTType *re, FFTType*im, unsigned int stride = 1 )
 	{ 
 		if( length > 0 ) {
 			for (int i = 0; i < length; i++) indexMap[i] = i*stride  ;
 			radix2IOIPFFT(length,im, re, wre, wim, indexMap  );	
-			}
+		}
 	}
 	
-	void UnscaledInverseFFT(FFTType *re, FFTType*im, unsigned int *indexMap){ if( length > 0 ) radix2IOIPFFT(length,im, re, wre, wim, indexMap  );	}
+	void UnscaledInverseFFT(FFTType *re, FFTType*im, unsigned int *indexMap){
+		 if( length > 0 ) radix2IOIPFFT(length,im, re, wre, wim, indexMap  );
+	}
 
 	void InverseFFT(FFTType *re, FFTType*im, unsigned int stride = 1 )
 	{ 
 		for (int i = 0; i < length; i++) indexMap[i] = i*stride  ;
-	  if( length > 0 ) radix2IOIPFFT(length,im, re, wre, wim, indexMap  );	
+	  if( length > 0 ) { 
+	  	radix2IOIPFFT(length,im, re, wre, wim, indexMap  );	
 	    for(u32 i = 0 ; i < length; i++){
 	    	 re[indexMap[i]] = re[indexMap[i]]/length;
 		  	 im[indexMap[i]] = im[indexMap[i]]/length;
 		  }
+		}
   }
 	void InverseFFT(FFTType *re, FFTType*im, unsigned int *indexMap )
 	{ 
-		     if( length > 0 ) radix2IOIPFFT(length,im, re, wre, wim, indexMap  );	
+     if( length > 0 ){ radix2IOIPFFT(length,im, re, wre, wim, indexMap  );	
 		     for(u32 i = 0 ; i < length; i++){
 		     	 re[indexMap[i]] = re[indexMap[i]]/length;
 		     	 im[indexMap[i]] = im[indexMap[i]]/length;
 		     }
+		}
   }
+
+ 	void rotate(u32 rotation, FFTType *re, FFTType*im, unsigned int stride = 1 )
+	{ 
+		for (int i = 0; i < length; i++) indexMap[i] = i*stride  ;
+	 	rotate(rotation, re, im, indexMap )	;	
+	}
+
+ 	void rotate(u32 rotation, FFTType *re, FFTType*im, unsigned int *indexMap )
+	{ 
+		if(rotation == 1) return; //noop
+		if(0 == (rotation % 2)) {
+			std::cerr << "rotation must be odd " << rotation << std::endl;
+		}
+		else {
+			u32 rot = rotation % length;
+			// build map
+			for( u32 ix = 0 ; ix < length; ix++) 
+			      rotationMap[ix] = (rot * ix) % length;
+			 	
+			// use (and destroy) map      
+			for( u32 ix = 0 ; ix < length; ix++) 
+			{ 
+				
+				if( rotationMap[ix] == 0 ) continue;
+				else if (rotationMap[ix] == ix) {
+					  rotationMap[ix] = 0;
+					  continue;
+					}
+				else if (rotationMap[rotationMap[ix]] == ix) { 
+						// a simple swap 
+					FFTType tre ;
+					FFTType tim ;
+					tre =  re[indexMap[rotationMap[ix]]];
+					tim =  im[indexMap[rotationMap[ix]]];
+          re[indexMap[rotationMap[ix]]] = re[indexMap[ix]] ;     
+          im[indexMap[rotationMap[ix]]] = im[indexMap[ix]] ;     
+          re[indexMap[ix]] = tre;
+          im[indexMap[ix]] = tim;
+					rotationMap[rotationMap[ix]] = 0;
+					rotationMap[ix] = 0;
+				}
+				else {
+					FFTType tre ;
+					FFTType tim ;
+					u32 startIndex = ix;					
+					u32 destinationIndex = startIndex;
+					u32 sourceIndex = rotationMap[destinationIndex];
+					tre =  re[indexMap[startIndex]];
+					tim =  im[indexMap[startIndex]];
+					do {
+					  re[indexMap[destinationIndex]] = re[indexMap[sourceIndex]];
+					  im[indexMap[destinationIndex]] = im[indexMap[sourceIndex]];
+						rotationMap[destinationIndex] = 0;
+						destinationIndex = sourceIndex ;
+						sourceIndex = rotationMap[sourceIndex];
+					} while (destinationIndex && (sourceIndex != startIndex ));
+					re[indexMap[destinationIndex]] = tre; 
+					im[indexMap[destinationIndex]] = tim;
+					rotationMap[destinationIndex] = 0;
+				}
+			}
+		}
+	}
+
 	
 	private: 
 		u32 length ;
+
 		FFTType *wre ;
 		FFTType *wim ;
 		unsigned int *indexMap ;
+		unsigned int *rotationMap ;
 
 		void radix2IOIPFFT(u32 N,FFTType *re, FFTType*im, FFTType *wre, FFTType* wim, unsigned int *indexMap)
     {
@@ -228,5 +306,6 @@ public:
 				}//60
 			}//70
 		}	
+
 };
 
