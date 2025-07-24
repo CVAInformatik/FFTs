@@ -19,6 +19,7 @@ You should have received a copy of the GNU General Public License along with thi
 #include <iostream>
 #include <math.h>
 #include <algorithm>
+#include "FFTBase.h"
 #include "simpleRadix2IOIPFFTindex.h"
 
 /*
@@ -36,7 +37,7 @@ You should have received a copy of the GNU General Public License along with thi
       
 */
 
-class simple32NIOIPFFTtype {
+class simple32NIOIPFFTtype: public FFTBaseClass {
 	
 
 public: 
@@ -66,7 +67,7 @@ public:
 	{
 		 fft2->SetLength(P);
 		 length = fft2->Status();
- 		 if (length > 0) { 
+ 		 if (length > 2) { 
  		 	   // we need to find the inverses for the CRT mapping
  		 	   u32  P;
  		 	   u32  Q;
@@ -166,7 +167,14 @@ public:
 	}
 	
 	void InverseFFT(FFTType *re, FFTType*im, unsigned int *indexMap ){
-		ForwardFFT(im, re, indexMap);
+	  	ForwardFFT(im, re, indexMap);
+		  if( length > 0 ) { 
+	    	for(u32 i = 0 ; i < 3*length; i++){
+	    			re[indexMap[i]] = re[indexMap[i]]/(3*length);
+		  	 		im[indexMap[i]] = im[indexMap[i]]/(3*length);
+			  }
+			}
+
 	};
 
   private:
