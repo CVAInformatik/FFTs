@@ -67,7 +67,6 @@ void testFFTClass(u32 l, u32 f)
 {
 	FFTClass  *fft = new FFTClass();
 
-  u32 *indexMap;
 	FFTType *re;
 	FFTType *im;
 
@@ -105,13 +104,23 @@ void testFFTClass(u32 l, u32 f)
 	
 }
 
+void testFindLength()
+{
+		FFTClass  *fft = new FFTClass();
+    for(int i = 0 ; i < 257 ; i++){
+    	 printf(" min %4d  length  %4d\n", i, fft->FindLength(i) );
+    }
+
+	
+}
 
 
 int main(int argc, char **argv)
 {
 	  //testVirtual(10, 48);
-	  testFFTClass(3072, 48);
-	  testFFTClass(1536, 48);
-	  testFFTClass(1024, 48);
+	  //testFFTClass(3072, 48);
+	  //testFFTClass(1536, 48);
+	  //testFFTClass(1024, 48);
+	  testFindLength();
 	  return 0;
 }

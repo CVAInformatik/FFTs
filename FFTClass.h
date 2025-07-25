@@ -31,7 +31,7 @@ class FFTClass
 	     { fft->InverseFFT(re, im, indexMap);};
 
         // to set the length of the FFT
-        //  NB this is the actual length not some power
+        //  NB this is the actual length, not some power
         //  valid values  8,16,24,32,48,64,96,128,192,256,....
         u32 Length( u32 _len){
         	 u32 P = 0;
@@ -47,6 +47,18 @@ class FFTClass
         	 }
         	 else fft = new IndexedSimpleRadix2IOIPFFTtype();
         	 return fft->Status();
+        };
+        
+        /* Finds the smallest supported length >= min */
+        u32 FindLength( u32 min) {
+        	if( min <= 8) return 8 ;
+        	if( min <= 16) return 16 ;
+        	u32 len = 16 ;
+        	while( 1){
+        		if (min <= ((3*len)/2)) return ((3*len)/2);
+        		if (min <= (2*len))   return (2*len);
+        		len = len*2;	
+        	}
         };
 	   
 	private:
