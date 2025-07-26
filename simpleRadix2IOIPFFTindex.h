@@ -28,12 +28,20 @@ You should have received a copy of the GNU General Public License along with thi
 class IndexedSimpleRadix2IOIPFFTtype : public FFTBaseClass {
 
 public: 
-	IndexedSimpleRadix2IOIPFFTtype(){ length = 0;};
+	IndexedSimpleRadix2IOIPFFTtype(){ 
+		    length = 0;
+		 	  wre = 0;
+		 	  wim = 0;
+		 	  indexMap = 0;
+		 	  rotationMap = 0;		    
+		    };
 	~IndexedSimpleRadix2IOIPFFTtype(){	
-		 	  delete [] wre;
-		 	  delete [] wim;
-		 	  delete [] indexMap;
-		 	  delete [] rotationMap;
+				std::cout << "~IndexedSimpleRadix2IOIPFFTtype()" << std::endl;
+		 	  if( wre) delete [] wre;
+		 	  if( wim) delete [] wim;
+		 	  if(indexMap) delete [] indexMap;
+		 	  if( rotationMap) delete [] rotationMap;
+				std::cout << "~IndexedSimpleRadix2IOIPFFTtype()" << std::endl;
 	};
 	
 	// 
@@ -41,14 +49,15 @@ public:
 	//  Status() will return the actual length
 	void SetLength(u32 P)
 	{
-		 if (length > 0){
+  	if(wre) delete [] wre;
+		if(wim) delete [] wim;
+		if(indexMap) delete [] indexMap;
+		if(rotationMap) delete [] rotationMap;
+			
+		if (length > 0){
 		 	  length = 0;
-		 	  delete [] wre;
-		 	  delete [] wim;
-		 	  delete [] indexMap;
-		 	  delete [] rotationMap;
-		 }
-		 if( P > 2 ) {
+		}
+		if( P > 2 ) {
 		 		length = 1; 
 		 		for(int i = 0; i < P ; i++) length = length + length;  
 
@@ -61,7 +70,7 @@ public:
     		indexMap = new unsigned int[length];
     		for(u32 i = 0; i < length; i++) indexMap[i] = i;
     		rotationMap = new unsigned int[length];
-		 }
+		}
 	}
 	
 	u32 Status() { return length;}
@@ -93,7 +102,7 @@ public:
 	void InverseFFT(FFTType *re, FFTType*im, unsigned int stride = 1 )
 	{ 
 		for (int i = 0; i < length; i++) indexMap[i] = i*stride  ;
-  	InverseFFT(im, re,indexMap  );	
+  	InverseFFT(re, im,indexMap  );	
   }
   
 	void InverseFFT(FFTType *re, FFTType*im, unsigned int *indexMap )
