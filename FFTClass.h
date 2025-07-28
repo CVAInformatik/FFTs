@@ -54,7 +54,11 @@ class FFTClass
         	 	  fft = fft2;
         	 	  fft-> SetLength(P);
         	 }
-        	 else fft = fft2;
+        	 else {
+        	 	delete fft2;
+        	 	fft2 = new IndexedSimpleRadix2IOIPFFTtype();
+        	 	fft = fft2;
+        	 }
         	 return fft->Status(); 
 
         };
