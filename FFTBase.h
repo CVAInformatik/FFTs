@@ -16,11 +16,11 @@ class FFTBaseClass {
 public:
 	  virtual void SetLength(u32 p)	= 0;
 	  virtual u32 Status() = 0;
-	  virtual void ForwardFFT(FFTType *re, FFTType*im, unsigned int stride ) = 0;
-	  virtual void ForwardFFT(FFTType *re, FFTType*im, unsigned int *indexMap ) = 0;
-	  virtual void UnscaledInverseFFT(FFTType *re, FFTType*im, unsigned int stride) = 0;
-	  virtual void UnscaledInverseFFT(FFTType *re, FFTType*im, unsigned int *indexMap) = 0;
-	  virtual void InverseFFT(FFTType *re, FFTType*im, unsigned int stride) = 0;
-	  virtual void InverseFFT(FFTType *re, FFTType*im, unsigned int *indexMap) = 0;
+	  virtual void ForwardFFT(FFTType *re, FFTType *im, unsigned int stride ) = 0;
+	  virtual void ForwardFFT(FFTType *re, FFTType *im, unsigned int *indexMap ) = 0;
+	  virtual void UnscaledInverseFFT(FFTType *re, FFTType *im, unsigned int stride) = 0;
+	  virtual void UnscaledInverseFFT(FFTType *re, FFTType *im, unsigned int *indexMap) = 0;
+	  virtual void InverseFFT(FFTType *re, FFTType *im, unsigned int stride) = 0;
+	  virtual void InverseFFT(FFTType *re, FFTType *im, unsigned int *indexMap) = 0;
 	  
 };

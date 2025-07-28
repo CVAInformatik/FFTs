@@ -36,12 +36,10 @@ public:
 		 	  rotationMap = 0;		    
 		    };
 	~IndexedSimpleRadix2IOIPFFTtype(){	
-				std::cout << "~IndexedSimpleRadix2IOIPFFTtype()" << std::endl;
 		 	  if( wre) delete [] wre;
 		 	  if( wim) delete [] wim;
 		 	  if(indexMap) delete [] indexMap;
 		 	  if( rotationMap) delete [] rotationMap;
-				std::cout << "~IndexedSimpleRadix2IOIPFFTtype()" << std::endl;
 	};
 	
 	// 

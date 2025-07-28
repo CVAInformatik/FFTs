@@ -14,8 +14,15 @@ You should have received a copy of the GNU General Public License along with thi
 class FFTClass
 {
 	public:   
-		   FFTClass(){ FFTBaseClass  *fft = new IndexedSimpleRadix2IOIPFFTtype();};
-		   ~FFTClass() {delete fft ;};
+		   FFTClass(){ 
+		   	  fft2 = new IndexedSimpleRadix2IOIPFFTtype();
+		   	  fft3 = new simple32NIOIPFFTtype();
+		   	  fft = fft2 ;
+		   	};
+		   ~FFTClass() {
+		   	    delete fft2 ;
+		   	    delete fft3 ;
+		   	};
 	     u32 Status() {return fft->Status();};
 	     void ForwardFFT(FFTType *re, FFTType *im, unsigned int stride = 1 )
 	     { fft->ForwardFFT(re, im, stride ); };
@@ -34,19 +41,22 @@ class FFTClass
         //  NB this is the actual length, not some power
         //  valid values  8,16,24,32,48,64,96,128,192,256,....
         u32 Length( u32 _len){
+        	
         	 u32 P = 0;
         	 u32 len = _len;
-        	 delete fft;
+
         	 while(len && (len& 1) == 0){  P++, len = len>> 1; }
-        	 if (len == 3) {
-        	 	  fft = new simple32NIOIPFFTtype();
+
+        	 if (len == 3) {        	 	  
+        	 	  fft = fft3;
         	 	  fft-> SetLength(P); 
-        	 } else if ( len == 1){
-        	 	  fft = new IndexedSimpleRadix2IOIPFFTtype();
+        	 } else if ( len == 1){        	 	  
+        	 	  fft = fft2;
         	 	  fft-> SetLength(P);
         	 }
-        	 else fft = new IndexedSimpleRadix2IOIPFFTtype();
-        	 return fft->Status();
+        	 else fft = fft2;
+        	 return fft->Status(); 
+
         };
         
         /* Finds the smallest supported length >= min */
@@ -62,5 +72,8 @@ class FFTClass
         };
 	   
 	private:
-		FFTBaseClass  *fft ; // will always point at something 
+		
+		FFTBaseClass  *fft ; // will always point at something
+		IndexedSimpleRadix2IOIPFFTtype *fft2 ;
+		simple32NIOIPFFTtype           *fft3;
 };
